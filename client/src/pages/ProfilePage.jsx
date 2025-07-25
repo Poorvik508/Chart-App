@@ -1,15 +1,29 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from "../assets/assets"
 import {useNavigate} from 'react-router-dom'
+import { AuthContext } from "../context/AuthContext"
 
 const ProfilePage = () => {
+  const { authUser, updateProfile } = useContext(AuthContext);
   const [selectedImg, setSelectedImg] = useState(null)
   const navigate = useNavigate();
-  const [name, setname] = useState("Martin Johnson")
-  const [bio, setBio] = useState("Hi Everyone,I am Using Quick Chart")
+  const [name, setname] = useState(authUser.fullName)
+  const [bio, setBio] = useState(authUser.bio)
   const handelSubmit = async (e) => {
-    e.preventDefault()
-    navigate('/')
+    e.preventDefault();
+    if (!selectedImg)
+    {
+      await updateProfile({ fullName: name, bio });
+      navigate('/')
+      return;
+    }
+    const reander = new FileReader();
+    reander.readAsDataURL(selectedImg);
+    reander.onload = async () => {
+      const base64Image = reander.result;
+      await updateProfile({ profilePic: base64Image, fullName: name, bio });
+      navigate('/');
+    }
   }
   return (
     <div className="min-h-screen bg-no-repeat flex items-center justify-center">
@@ -21,12 +35,12 @@ const ProfilePage = () => {
             <img src={selectedImg ? URL.createObjectURL(selectedImg) : assets.avatar_icon} alt="icon_" className={`w-12 h-12 ${selectedImg && 'rounded-full'}`} />
             Upload profile Image
           </label>
-          <input onChange={(e) => { setname(e.target.value) }} value={name} type="text" required placeholder="Your Name " className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500" />
-          <textarea onChange={(e) => { setBio(e.target.value) }} required placeholder="Write Profile Bio" className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500" rows={4}></textarea>
+          <input onChange={(e) => { setname(e.target.value) }} value={name} type="text" required placeholder="Your Name " className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-transparent" />
+          <textarea onChange={(e) => { setBio(e.target.value) }} required placeholder="Write Profile Bio" className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 bg-transparent" rows={4} value={bio}></textarea>
           <button className="bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer" type="submit">Save</button>
         </form>
 
-        <img className="max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10" src={assets.logo_icon} alt="" />
+        <img className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImg&& 'rounded-full'}`} src={assets.logo_icon} alt="" />
       </div>
     </div>
   )

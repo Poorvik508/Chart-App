@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from "../assets/assets"
+import { AuthContext } from "../context/AuthContext"
 
 const LoginPage = () => {
+  const {login}=useContext(AuthContext)
   const [state, setstate] = useState("Sign up")
   const [fullName, setfullName] = useState("")
   const [email, setemail] = useState("")
@@ -15,6 +17,7 @@ const LoginPage = () => {
       setisdatasubmited(true);
       return;
     }
+    login(state ==="Sign up"?'signup':'login',{fullName,email,password,bio})
   }
   return (
     <div className="min-h-screen bg-cover bg-cneter flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">
@@ -57,9 +60,9 @@ const LoginPage = () => {
           </>
         )}
         {state === "Sign up" && isdatasubmited && (
-          <textarea onChange={()=>setbio(e.target.value)} value={bio}
+          <textarea onChange={(e)=>setbio(e.target.value)} value={bio}
             rows={4} 
-            className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="provide a short bio..." required
+            className="p-2 text-black border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="provide a short bio..." required
           ></textarea>
         )}
         <button type="submit" className="py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer">{state === "Sign up" ? "Create Account" : "Login Now"}</button>
