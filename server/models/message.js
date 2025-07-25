@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const userSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema({
    senderId:{type:mongoose.Schema.Types.ObjectId,ref:"User" ,required:true},
 
     receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     image: { type: String },
     seen:{type:Boolean ,default:false},
 }, { timestamps: true })
-const Message= mongoose.model("User", messageSchema); 
+const Message= mongoose.model("Message", messageSchema); 
 export default Message;
 
        
